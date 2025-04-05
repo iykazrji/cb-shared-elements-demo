@@ -50,6 +50,7 @@ interface GraphData {
 	monthly: Coordinate[];
 	yearly: Coordinate[];
 	all_time: Coordinate[];
+	zero: Coordinate[];
 }
 
 /**
@@ -60,14 +61,11 @@ interface GraphData {
  */
 
 function getRandomDate(startDate: Date, endDate: Date) {
-	const randomDate = new Date(
-		startDate.getTime() +
-			Math.random() * (endDate.getTime() - startDate.getTime())
-	);
+	const randomDate = new Date(endDate.getTime() - startDate.getTime());
 	return randomDate.toISOString().split("T")[0];
 }
 
-function generateRandomPrice(
+export function generateRandomPrice(
 	start: number,
 	end: number,
 	steps: number,
@@ -96,13 +94,20 @@ function generateRandomPrice(
 	return values;
 }
 
-const STEPS = 50;
+const STEPS = 20;
 
 const dailyValues = generateRandomPrice(2, 5.3, STEPS, 11);
 const weeklyValues = generateRandomPrice(0.3, 50, STEPS, 8.3);
 const monthlyValues = generateRandomPrice(4, 80.5, STEPS, 14.2);
 const yearlyValues = generateRandomPrice(1.4, 40.5, STEPS, 20);
 const allTimeValues = generateRandomPrice(0.3, 49.5, STEPS, 14.5);
+
+export function getRandomCoords() {
+	return Array.from({ length: STEPS }, (_, i) => ({
+		x: getRandomDate(new Date("2024-01-01"), new Date("2025-3-31")),
+		y: generateRandomPrice(0.3, 49.5, STEPS, 14.5)[i],
+	}));
+}
 
 export function getPriceCoordinates(
 	priceData: PriceData,
@@ -161,12 +166,18 @@ export function getPriceCoordinates(
 		y: allTimeValues[i],
 	}));
 
+	const zeroCoords = Array.from({ length: STEPS }, (_, i) => ({
+		x: getRandomDate(new Date("2024-01-01"), new Date("2025-3-31")),
+		y: 0,
+	}));
+
 	return {
 		daily: dailyCoords,
 		weekly: weeklyCoords,
 		monthly: monthlyCoords,
 		yearly: yearlyCoords,
 		all_time: allTimeCoords,
+		zero: zeroCoords,
 	};
 }
 

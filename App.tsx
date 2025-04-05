@@ -25,8 +25,8 @@ const RootStack = createNativeStackNavigator({
 			screen: CoinDetailsScreen,
 			options: {
 				headerShown: false,
-				animation: isIOS ? "fade" : "ios_from_right",
-				animationDuration: isIOS ? 300 : 350,
+				animation: isIOS ? "fade" : "slide_from_right",
+				animationDuration: isIOS ? 300 : 550,
 			},
 		},
 	},

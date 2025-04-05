@@ -17,6 +17,8 @@ import Animated, {
 	useSharedValue,
 	withTiming,
 	FadeOutDown,
+	useAnimatedProps,
+	runOnJS,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { StaticScreenProps } from "@react-navigation/native";
@@ -28,9 +30,9 @@ import BalanceList from "../components/coin-details/BalanceList";
 import CoinChart from "../components/coin-details/CoinChart";
 import HeaderControls from "../components/coin-details/HeaderControls";
 import { StatusBar } from "expo-status-bar";
-
+import { hexToRgba } from "../utils/hexToRgba";
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const isIOS = Platform.OS === "ios";
+// const isIOS = Platform.OS === "ios" ;
 
 export default function CoinDetailsScreen({
 	route,
@@ -40,10 +42,18 @@ export default function CoinDetailsScreen({
 	const { top } = useSafeAreaInsets();
 	const navigation = useNavigation();
 	const isFocused = useIsFocused();
-
+	const coin = route.params.coin;
 	const headerDetailsOpacity = useSharedValue(0); // Starts Invisible
-
-	const { coin } = route.params;
+	const statusBarBackgroundProps = useAnimatedProps(() => ({
+		backgroundColor:
+			withTiming(
+				runOnJS(hexToRgba)(
+					coin.background_color,
+					headerDetailsOpacity.value
+				) ?? "transparent",
+				{ duration: 350 }
+			) ?? "transparent",
+	}));
 
 	useFocusEffect(
 		useCallback(() => {
@@ -63,7 +73,7 @@ export default function CoinDetailsScreen({
 
 	return (
 		<View style={{ flex: 1, backgroundColor: coin.background_color }}>
-			<StatusBar style={"auto"} backgroundColor={coin.background_color} />
+			<StatusBar style={"auto"} {...statusBarBackgroundProps} />
 			<ScrollView
 				contentContainerStyle={{
 					flex: 1,
@@ -92,6 +102,7 @@ export default function CoinDetailsScreen({
 							<HeaderControls
 								coin={coin}
 								handleBack={handleBack}
+								parentVisibilityValue={headerDetailsOpacity}
 							/>
 							<CoinChart
 								coin={coin}
@@ -141,7 +152,7 @@ const BackgroundTile = ({ coin }: BackgroundTileProps) => {
 	const backgroundColor = coin.background_color;
 	return (
 		<Animated.View
-			sharedTransitionTag={isIOS ? `main-tile-${coin.id}` : undefined}
+			sharedTransitionTag={`main-tile-${coin.id}`}
 			style={[
 				styles.tile,
 				{
@@ -156,9 +167,7 @@ const BackgroundTile = ({ coin }: BackgroundTileProps) => {
 const ItemEmojiSharedElement = ({ coin }: { coin: MockCoin }) => {
 	return (
 		<Animated.Text
-			sharedTransitionTag={
-				isIOS ? `main-tile-emoji-${coin.id}` : undefined
-			}
+			sharedTransitionTag={`main-tile-emoji-${coin.id}`}
 			style={{
 				fontSize: 0,
 				position: "absolute",

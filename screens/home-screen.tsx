@@ -26,7 +26,7 @@ import ScreenHeader from "../components/home-screen/ScreenHeader";
 import { MockCoin, mockCoins } from "../data/mock-coins";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const isIOS = Platform.OS === "ios";
+// const isIOS = Platform.OS === "ios" || Platform.OS === "android";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -118,9 +118,7 @@ const CoinItem = ({ coin, index }: { coin: MockCoin; index: number }) => {
 					}
 				>
 					<Animated.View
-						sharedTransitionTag={
-							isIOS ? `main-tile-${coin.id}` : undefined
-						}
+						sharedTransitionTag={`main-tile-${coin.id}`}
 						style={[
 							styles.tile,
 							{
@@ -131,16 +129,10 @@ const CoinItem = ({ coin, index }: { coin: MockCoin; index: number }) => {
 					{/* Shared Transition Element to ensure the tile has a nice unmount transition when navigating back */}
 					<Animated.View
 						style={styles.sharedTransitionContainer}
-						sharedTransitionTag={
-							isIOS
-								? `main-shared-transition-container-${coin.id}`
-								: undefined
-						}
+						sharedTransitionTag={`main-shared-transition-container-${coin.id}`}
 					/>
 					<Animated.Text
-						sharedTransitionTag={
-							isIOS ? `main-tile-emoji-${coin.id}` : undefined
-						}
+						sharedTransitionTag={`main-tile-emoji-${coin.id}`}
 						style={[
 							{
 								fontSize: nfs(30),

@@ -48,6 +48,8 @@ const CoinChart = ({ coin, parentVisibilityValue }: CoinChartProps) => {
 				return yearly;
 			case "all_time":
 				return all_time;
+			default:
+				return daily;
 		}
 	}, [selectedChart]);
 
@@ -162,7 +164,13 @@ const CoinChart = ({ coin, parentVisibilityValue }: CoinChartProps) => {
 			{/* Duration Selector */}
 			<ChartDataSelector
 				selectedChart={selectedChart}
-				setSelectedChart={setSelectedChart}
+				setSelectedChart={(chart) => {
+					setChartHoverValue(
+						chartData[chartData.length - 1].y.toFixed(2)
+					);
+
+					setSelectedChart(chart);
+				}}
 				coin={coin}
 			/>
 

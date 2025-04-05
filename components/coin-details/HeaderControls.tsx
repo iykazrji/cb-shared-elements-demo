@@ -4,23 +4,55 @@ import { View } from "react-native";
 import { MockCoin } from "../../data/mock-coins";
 import AnimatedButton from "../shared/AnimatedButton";
 import { wn } from "../../utils/normalizeDimensions";
+import Animated, {
+	SharedValue,
+	useAnimatedStyle,
+	useDerivedValue,
+	withTiming,
+	Easing,
+} from "react-native-reanimated";
 
 interface HeaderControlsProps {
 	coin: MockCoin;
 	handleBack: () => void;
+	parentVisibilityValue: SharedValue<number>;
 }
-const HeaderControls = ({ coin, handleBack }: HeaderControlsProps) => {
+const HeaderControls = ({
+	coin,
+	handleBack,
+	parentVisibilityValue,
+}: HeaderControlsProps) => {
 	const foregroundColor = coin.foreground_color;
 
+	const headerStyle = useAnimatedStyle(() => {
+		const thresholdCondition = parentVisibilityValue.value > 0.45;
+		return {
+			opacity: withTiming(thresholdCondition ? 1 : 0, {
+				duration: 500,
+				easing: Easing.bezier(0.25, 0.1, 0.25, 1.0),
+			}),
+			transform: [
+				{
+					translateY: withTiming(thresholdCondition ? 0 : -50, {
+						duration: 500,
+						easing: Easing.bezier(0.25, 0.1, 0.25, 1.0),
+					}),
+				},
+			],
+		};
+	});
 	return (
-		<View
-			style={{
-				flexDirection: "row",
-				justifyContent: "space-between",
-				alignItems: "center",
-				paddingHorizontal: wn(20),
-				paddingTop: wn(10),
-			}}
+		<Animated.View
+			style={[
+				{
+					flexDirection: "row",
+					justifyContent: "space-between",
+					alignItems: "center",
+					paddingHorizontal: wn(20),
+					paddingTop: wn(10),
+				},
+				headerStyle,
+			]}
 		>
 			<View>
 				<AnimatedButton
@@ -92,7 +124,7 @@ const HeaderControls = ({ coin, handleBack }: HeaderControlsProps) => {
 					/>
 				</AnimatedButton>
 			</View>
-		</View>
+		</Animated.View>
 	);
 };
 
