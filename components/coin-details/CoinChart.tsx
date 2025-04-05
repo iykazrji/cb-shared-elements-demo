@@ -17,7 +17,7 @@ import { SparkChart } from "../shared/charts/SparkChart";
 import AnimatedView from "../shared/AnimatedView";
 import AnimatedTitle from "../shared/AnimatedTitle";
 import ChartControlsWrapper from "./ChartControlsWrapper";
-
+import { throttle } from "../../utils/throttle";
 interface CoinChartProps {
 	coin: MockCoin;
 	parentVisibilityValue: SharedValue<number>;
@@ -62,10 +62,11 @@ const CoinChart = ({ coin, parentVisibilityValue }: CoinChartProps) => {
 		};
 	}, [coin.background_color]);
 
-	const handleChartHoverValueChange = (value: string) => {
+	const handleChartHoverValueChange = throttle((value: string) => {
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
 		setChartHoverValue(value);
-	};
+	}, 250);
 
 	const actionButtonBackgroundColor = useMemo(() => {
 		return hexToRgba(coin.foreground_color, 0.09);

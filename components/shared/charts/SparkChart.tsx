@@ -5,7 +5,7 @@ import { Sparkline } from "./SparkLine";
 import { SparkArea } from "./SparkArea";
 import { LinearGradient, Circle, vec } from "@shopify/react-native-skia";
 import { hexToRgba } from "../../../utils/hexToRgba";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface SparkChartProps {
 	chartData: { x: string | number; y: number }[];
@@ -32,6 +32,10 @@ export const SparkChart = ({
 		const newHoverValue = state.y.y.value.value?.toFixed(2);
 		runOnJS(onChartHoverValueChange)(newHoverValue);
 	}, [state]);
+
+	useEffect(() => {
+		onChartHoverValueChange(chartData[chartData.length - 1].y.toFixed(2));
+	}, [chartData]);
 
 	return (
 		<CartesianChart
@@ -82,6 +86,7 @@ export const SparkChart = ({
 						y={state.y.y.position}
 						color={colors.solid}
 						isActive={isActive}
+						chartData={chartData}
 					/>
 				</>
 			)}
@@ -94,13 +99,24 @@ const ChartTooltip = ({
 	y,
 	color,
 	isActive,
+	chartData,
 }: {
 	x: SharedValue<number>;
 	y: SharedValue<number>;
 	color: string;
 	isActive: boolean;
+	chartData: { x: string | number; y: number }[];
 }) => {
 	const hasRendered = useRef(false);
+	const lastChartData = useRef(chartData);
+
+	useEffect(() => {
+		if (
+			JSON.stringify(lastChartData.current) !== JSON.stringify(chartData)
+		) {
+			hasRendered.current = false;
+		}
+	}, [chartData]);
 
 	if (!isActive && !hasRendered.current) {
 		return null;

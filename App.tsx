@@ -8,6 +8,9 @@ import HomeScreen from "./screens/home-screen";
 import CoinDetailsScreen from "./screens/coin-details-screen";
 import { useFonts } from "expo-font";
 import { MockCoin } from "./data/mock-coins";
+import { Platform } from "react-native";
+
+const isIOS = Platform.OS === "ios";
 
 const RootStack = createNativeStackNavigator({
 	screens: {
@@ -22,8 +25,8 @@ const RootStack = createNativeStackNavigator({
 			screen: CoinDetailsScreen,
 			options: {
 				headerShown: false,
-				animation: "fade",
-				animationDuration: 300,
+				animation: isIOS ? "fade" : "ios_from_right",
+				animationDuration: isIOS ? 300 : 350,
 			},
 		},
 	},
