@@ -1,20 +1,58 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import "react-native-gesture-handler";
+import {
+	createStaticNavigation,
+	StaticParamList,
+} from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import HomeScreen from "./screens/home-screen";
+import CoinDetailsScreen from "./screens/coin-details-screen";
+import { useFonts } from "expo-font";
+import { MockCoin } from "./data/mock-coins";
+
+const RootStack = createNativeStackNavigator({
+	screens: {
+		Home: {
+			screen: HomeScreen,
+			options: {
+				headerShown: false,
+				animationDuration: 300,
+			},
+		},
+		CoinDetails: {
+			screen: CoinDetailsScreen,
+			options: {
+				headerShown: false,
+				animation: "fade",
+				animationDuration: 300,
+			},
+		},
+	},
+});
+
+type RootStackParamList = StaticParamList<typeof RootStack>;
+const RootStackNavigator = createStaticNavigation(RootStack);
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+	const [loaded] = useFonts({
+		GilroyLight: require("./assets/fonts/gilroy/gilroy-light.ttf"),
+		GilroyRegular: require("./assets/fonts/gilroy/gilroy-regular.ttf"),
+		GilroyMedium: require("./assets/fonts/gilroy/gilroy-medium.ttf"),
+		GilroySemiBold: require("./assets/fonts/gilroy/gilroy-semibold.ttf"),
+		GilroyBold: require("./assets/fonts/gilroy/gilroy-bold.ttf"),
+	});
+
+	if (!loaded) {
+		return null;
+	}
+	return <RootStackNavigator />;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+declare global {
+	namespace ReactNavigation {
+		interface RootParamList extends RootStackParamList {
+			CoinDetails: {
+				coin: MockCoin;
+			};
+		}
+	}
+}
