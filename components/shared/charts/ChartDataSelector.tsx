@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import AnimatedButton from "../AnimatedButton";
 import { View, Text } from "react-native";
 import * as Haptics from "expo-haptics";
-
+import { getForegroundColor } from "../../../utils/getForegroundColor";
 export type ChartType = "daily" | "weekly" | "monthly" | "yearly" | "all_time";
 
 export const chartTypes: ChartType[] = [
@@ -53,6 +53,9 @@ export const ChartSelectorButton = ({
 		onPress();
 	};
 
+	const foregroundColor =
+		coin.foreground_color ?? getForegroundColor(coin.background_color);
+
 	return (
 		<AnimatedButton
 			onPress={handlePress}
@@ -74,7 +77,7 @@ export const ChartSelectorButton = ({
 				<Text
 					style={[
 						{
-							color: coin.foreground_color,
+							color: foregroundColor,
 							fontSize: nfs(12),
 							opacity: isSelected ? 1 : 0.85,
 							fontFamily: isSelected

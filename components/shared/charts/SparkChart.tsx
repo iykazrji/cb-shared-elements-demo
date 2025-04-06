@@ -53,7 +53,7 @@ export const SparkChart = ({
 			chartPressState={state}
 			domainPadding={{
 				bottom: wn(10),
-				top: wn(10),
+				top: wn(15),
 				left: wn(0),
 				right: wn(0),
 			}}

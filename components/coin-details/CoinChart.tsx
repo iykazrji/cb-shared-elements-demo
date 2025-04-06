@@ -18,6 +18,7 @@ import AnimatedView from "../shared/AnimatedView";
 import AnimatedTitle from "../shared/AnimatedTitle";
 import ChartControlsWrapper from "./ChartControlsWrapper";
 import { throttle } from "../../utils/throttle";
+import { getForegroundColor } from "../../utils/getForegroundColor";
 interface CoinChartProps {
 	coin: MockCoin;
 	parentVisibilityValue: SharedValue<number>;
@@ -57,12 +58,18 @@ const CoinChart = ({ coin, parentVisibilityValue }: CoinChartProps) => {
 		waitForHeader.value = parentVisibilityValue.value > 0.75;
 	}, [parentVisibilityValue]);
 
+	const foregroundColor = useMemo(() => {
+		return (
+			coin.foreground_color ?? getForegroundColor(coin.background_color)
+		);
+	}, [coin.background_color, coin.foreground_color]);
+
 	const gradientColors = useMemo(() => {
 		return {
-			gradientStart: hexToRgba(coin.foreground_color, 0.105),
-			gradientEnd: hexToRgba(coin.foreground_color, 0.005),
+			gradientStart: hexToRgba(foregroundColor, 0.105),
+			gradientEnd: hexToRgba(foregroundColor, 0.005),
 		};
-	}, [coin.background_color]);
+	}, [foregroundColor]);
 
 	const handleChartHoverValueChange = throttle((value: string) => {
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -71,8 +78,8 @@ const CoinChart = ({ coin, parentVisibilityValue }: CoinChartProps) => {
 	}, 250);
 
 	const actionButtonBackgroundColor = useMemo(() => {
-		return hexToRgba(coin.foreground_color, 0.09);
-	}, [coin.foreground_color]);
+		return hexToRgba(foregroundColor, 0.09);
+	}, [foregroundColor]);
 
 	return (
 		<Animated.View
@@ -94,7 +101,7 @@ const CoinChart = ({ coin, parentVisibilityValue }: CoinChartProps) => {
 						fontSize: nfs(16),
 						fontFamily: "GilroyMedium",
 						textAlign: "left",
-						color: coin.foreground_color,
+						color: foregroundColor,
 					}}
 				>
 					{`${coin.name}`}
@@ -109,7 +116,7 @@ const CoinChart = ({ coin, parentVisibilityValue }: CoinChartProps) => {
 						fontFamily: "GilroyBold",
 						textAlign: "left",
 						marginTop: wn(10),
-						color: coin.foreground_color,
+						color: foregroundColor,
 					}}
 				>
 					{`$${chartHoverValue}`}
@@ -128,14 +135,14 @@ const CoinChart = ({ coin, parentVisibilityValue }: CoinChartProps) => {
 					<Octicons
 						name={isUp ? "arrow-up" : "arrow-down"}
 						size={nfs(12)}
-						color={coin.foreground_color}
+						color={foregroundColor}
 					/>
 					<Text
 						style={{
 							fontSize: nfs(15),
 							marginLeft: wn(2),
 							fontFamily: "GilroyMedium",
-							color: coin.foreground_color,
+							color: foregroundColor,
 						}}
 					>
 						{`${coin.price_change_percentage_24h}%`}
@@ -152,7 +159,7 @@ const CoinChart = ({ coin, parentVisibilityValue }: CoinChartProps) => {
 				<SparkChart
 					chartData={chartData}
 					colors={{
-						solid: coin.foreground_color,
+						solid: foregroundColor,
 						gradientStart: gradientColors.gradientStart,
 						gradientEnd: gradientColors.gradientEnd,
 					}}
@@ -188,7 +195,7 @@ const CoinChart = ({ coin, parentVisibilityValue }: CoinChartProps) => {
 					style={{
 						fontSize: nfs(14),
 						fontFamily: "GilroyRegular",
-						color: coin.foreground_color,
+						color: foregroundColor,
 					}}
 				>
 					Owned by aneri.eth and 159k others

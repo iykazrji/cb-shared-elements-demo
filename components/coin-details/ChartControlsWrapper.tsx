@@ -5,7 +5,7 @@ import AnimatedButton from "../shared/AnimatedButton";
 import { nfs, wn } from "../../utils/normalizeDimensions";
 import { View, Text, StyleSheet } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-
+import { getForegroundColor } from "../../utils/getForegroundColor";
 interface ControlsWrapperProps {
 	coin: MockCoin;
 	actionButtonBackgroundColor: string;
@@ -16,6 +16,9 @@ const ChartControlsWrapper = ({
 	actionButtonBackgroundColor,
 	waitForHeader,
 }: ControlsWrapperProps) => {
+	const foregroundColor =
+		coin.foreground_color ?? getForegroundColor(coin.background_color);
+
 	return (
 		<AnimatedView
 			delay={1150}
@@ -37,7 +40,7 @@ const ChartControlsWrapper = ({
 							style={[
 								styles.headerActionButtonText,
 								{
-									color: coin.foreground_color,
+									color: foregroundColor,
 								},
 							]}
 						>
@@ -60,7 +63,7 @@ const ChartControlsWrapper = ({
 							style={[
 								styles.headerActionButtonText,
 								{
-									color: coin.foreground_color,
+									color: foregroundColor,
 								},
 							]}
 						>
@@ -83,7 +86,7 @@ const ChartControlsWrapper = ({
 						<MaterialCommunityIcons
 							name="swap-vertical"
 							size={wn(24)}
-							color={coin.foreground_color}
+							color={foregroundColor}
 						/>
 					</View>
 				</AnimatedButton>

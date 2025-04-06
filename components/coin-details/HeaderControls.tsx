@@ -11,6 +11,7 @@ import Animated, {
 	withTiming,
 	Easing,
 } from "react-native-reanimated";
+import { getForegroundColor } from "../../utils/getForegroundColor";
 
 interface HeaderControlsProps {
 	coin: MockCoin;
@@ -22,7 +23,8 @@ const HeaderControls = ({
 	handleBack,
 	parentVisibilityValue,
 }: HeaderControlsProps) => {
-	const foregroundColor = coin.foreground_color;
+	const foregroundColor =
+		coin.foreground_color ?? getForegroundColor(coin.background_color);
 
 	const headerStyle = useAnimatedStyle(() => {
 		const thresholdCondition = parentVisibilityValue.value > 0.45;
